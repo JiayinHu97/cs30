@@ -17,7 +17,7 @@ data ExerciseType
 
 -- | Helperfunction to create an ExerciseType
 exerciseType
-      :: (ToJSON a, FromJSON a) -- ^ We must be able to encode and decode in order to store the exercise properly
+      :: (ToJSON a, FromJSON a) -- We must be able to encode and decode in order to store the exercise properly
       => String -- ^ Identifier for URL
       -> String -- ^ Lecture this is part of
       -> String -- ^ Title of the exercise
@@ -39,9 +39,10 @@ exerciseType tg mn rn ct exGen fbGen
              Error e -> error$ "Decoding error of the exercise ("++e++")"
 
 -- | Data-structure to take (perhaps randomly)
-data ChoiceTree a = Node a | Branch [ChoiceTree a] deriving (Functor, Show)
+data ChoiceTree a = Node a | Branch [ChoiceTree a] deriving (Functor, Show, Eq)
 
-boolTree :: ChoiceTree Bool -- | True or False
+-- | randomly return True or False
+boolTree :: ChoiceTree Bool
 boolTree = nodes [True,False]
 
 -- | Super unsafe function! Requires its input to be a branch of at least two elements and removes the first.
