@@ -508,7 +508,11 @@ ul.dropdown-content>li{
 ul.dropdown-content>li:hover{
   border: 1px solid #c4dd88;
 }
-/* js ui elements */
+
+/* graph stuff */
+.graph {min-width: width 200px;
+        height: 300px;}
+/* sortable stuff */
 
 ul.sortable>li{
   list-style:none;
@@ -523,3 +527,26 @@ li.sortable-ghost{
 	box-shadow: 0 0 3px 1px #424141;
 }
 
+<<<<<<< HEAD
+=======
+
+/* js ui elements */
+
+.ui-draggable-handle {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.ui-selectable {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.ui-selectable-helper {
+	position: absolute;
+	z-index: 100;
+	border: 1px dotted black;
+}
+
+.ui-visual-focus {
+	box-shadow: 0 0 3px 1px #424141;
+}
+>>>>>>> main
