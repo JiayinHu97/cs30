@@ -6,6 +6,10 @@ import CS30.Data
 import Data.Ratio
 import GHC.Show ( showSpace )
 import qualified Data.Map as Map
+import CS30.Exercises.Util
+import CS30.Exercises.GenerateExerViaProofs.SolutionChecker
+    ( numeric_value_parser, evalRational ) 
+import Text.Megaparsec
 
 probabilityProof :: ExerciseType
 probabilityProof 
@@ -27,7 +31,7 @@ genExercise i = do expr <- probExpr i
                    let givenExpr = getLast proof
                    rList <- permutations 16
                    let givens = combineGiveExpr givenExpr rList
-                   return ((expr ,randList (evaluate expr) rList), givens)
+                   return ((expr, randList (evaluate expr) rList), givens)
 
                
 randList :: Val -> [Integer] -> Rational
@@ -155,7 +159,23 @@ rationToLatex 0 = "0"
 rationToLatex 1 = "1"
 rationToLatex r = "\\frac{" ++ show (numerator r) ++ "}" ++ "{" ++ show (denominator r) ++ "}"
 
-generateFeedback = undefined
+generateFeedback :: ((FracExpr, Rational), [(FracExpr,[Field], Rational)])
+              -> Map.Map String String
+              -> ProblemResponse
+              -> ProblemResponse
+generateFeedback ((expr, solution), _)  mStrs rsp = reTime $
+                        case Map.lookup "answer" mStrs of
+                            Nothing -> error "Answer field expected"
+                            Just v -> case runParser numeric_value_parser "" v of 
+                                 Left e -> markWrong $ rsp{prFeedback = [FText "You entered " , FMath $ show v, FText (", parse error" ++ errorBundlePretty e)]}
+                                 Right userAnswer -> case evalRational userAnswer of
+                                                        Nothing -> markWrong $ rsp{prFeedback = [FText "Sorry! You entered ", FMath $ show userAnswer, FText ", which we couldn't evaluate (division by zero?)"]}
+                                                        Just userSolution -> if userSolution == solution then
+                                                                                markCorrect $
+                                                                                    rsp{prFeedback = [FText "Congratulations! You entered ", FMath $ show userAnswer, FText ", the right answer is ", FMath$ show solution]}
+                                                                            else markWrong $
+                                                                                    rsp{prFeedback = [FText "Sorry! You entered ", FMath $ show userAnswer, FText ", the answer is wrong. The proof is ", FText $ show (getDerivation rules expr)]}
+
 
 --------------------------deal with show-----------------------------------------------------------
 prec :: MathOp -> Int
